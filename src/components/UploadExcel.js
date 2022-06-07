@@ -5,6 +5,7 @@ import PreviewExcel from './PreviewExcel';
 function UploadExcel() {
 
   const [file, setFile] = useState();
+  const [prevfile, setPrevfile] = useState();
   const [nowfile, setNowfile] = useState(false);
 
   const fileInput = useRef();
@@ -15,12 +16,12 @@ function UploadExcel() {
     setNowfile(true);
   }
 
-  const addFiles = (e) => {
+  const addFile = (e) => {
     e.preventDefault();
     fileInput.current.click();
   }
 
-  const deleteFiles = (e) => {
+  const deleteFile = (e) => {
     e.preventDefault();
     fileInput.current.value = "";
     setFile();
@@ -50,7 +51,6 @@ function UploadExcel() {
     })
   }
 
-console.log(file)
 
   return (
     <div>
@@ -67,11 +67,11 @@ console.log(file)
           </p>
           <input type='file' id="file" name='file' onChange={handleChange} style={{display:'none'}} ref={fileInput}
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-          <button onClick={addFiles}>{file ? '파일변경' : '파일추가'}</button>
+          <button onClick={addFile}>{file ? '파일변경' : '파일추가'}</button>
           {
             file ?
               <div>
-                <button onClick={deleteFiles}>파일삭제</button>
+                <button onClick={deleteFile}>파일삭제</button>
                 <button type='button' onClick={submitFile} >전송</button>
               </div>
             :

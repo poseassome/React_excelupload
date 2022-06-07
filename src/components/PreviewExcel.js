@@ -3,6 +3,7 @@ import * as xlsx from 'xlsx';
 
 function PreviewExcel(filedata) {
   const Files = filedata.filedata;
+  const [file, setFile] = useState();
   const [excelData, setExcelData] = useState();
 
   const ParsingFile = () => {
@@ -50,10 +51,13 @@ function PreviewExcel(filedata) {
             // function handleExcelDataHtml(sheet){
             //   console.log("sssss   ", sheet)
             // }
-console.log(excelData['result'][0])
+  useEffect(() => {
+    setFile(Files);
+  }, [Files])
+
   useEffect(() => {
     ParsingFile();
-  },[])
+  },[file])
 
   return (
     <div>
