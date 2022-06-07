@@ -50,21 +50,43 @@ function PreviewExcel(filedata) {
             // function handleExcelDataHtml(sheet){
             //   console.log("sssss   ", sheet)
             // }
-
+console.log(excelData['result'][0])
   useEffect(() => {
     ParsingFile();
   },[])
 
   return (
     <div>
-      <table style={{width: '800px', margin:'0 auto'}}>
+      <table style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
+        <thead>
+          <tr>
+        { excelData ?
+            excelData['result'][0].map((it, ins) => {
+                return <td key={ins} style={{border: '1px solid #000'}}>{it}</td>
+              })
+            :
+            null
+          }
+          </tr>
+        </thead>
         <tbody>
           { excelData ?
-            excelData['result'].map((item, idx) => {
+            // ***** column명 포함한 모든 데이터 가져오기 *****
+            // excelData['result'].map((item, idx) => {
+            //   return (
+            //     <tr key={idx}>
+            //       {item.map((it, ins) => {
+            //         return <td key={ins} style={{border: '1px solid #000'}}>{it}</td>
+            //       })}
+            //     </tr>
+            //   )
+            // })
+
+            excelData['result'].filter((data, idx) => idx !== 0).map((item, idx) => {
               return (
                 <tr key={idx}>
                   {item.map((it, ins) => {
-                    return <td key={ins}>{it}</td>
+                    return <td key={ins} style={{border: '1px solid #000'}}>{it}</td>
                   })}
                 </tr>
               )
