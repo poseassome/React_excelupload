@@ -20,6 +20,7 @@
             var firstSheet = wb.Sheets[firstSheetName]; // 첫번째 시트 
             callback(firstSheet);      
         };
+        console.log(input.files[0])
         reader.readAsBinaryString(input.files[0]);
     }
     function handleExcelDataAll(sheet){

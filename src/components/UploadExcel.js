@@ -1,16 +1,17 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import axios from 'axios';
 import PreviewExcel from './PreviewExcel';
 
 function UploadExcel() {
 
-  const [file, setFile] = useState([]);
+  const [file, setFile] = useState();
   const [nowfile, setNowfile] = useState(false);
 
   const fileInput = useRef();
 
   const handleChange = (event) => {
     event.preventDefault();
-    setFile(event.target.files);
+    setFile(event.target.files[0]);
     setNowfile(true);
   }
 
@@ -22,41 +23,69 @@ function UploadExcel() {
   const deleteFiles = (e) => {
     e.preventDefault();
     fileInput.current.value = "";
-    setFile([]);
+    setFile();
     setNowfile(false);
   }
+
+  const submitFile = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('file', file);
+
+    axios({
+      method: 'POST',
+      url : `http://localhost:8080/xls/upload`,
+      data: formData,
+      headers: {
+          'Content-Type' : 'multipart/form-data' 
+      }
+    })
+    .then((response) => { 
+        console.log(response);
+        alert("전송 성공 !");
+    })
+    .catch((error) => {
+        console.log(error);
+        alert("전송 실패 !");
+    })
+  }
+
+console.log(file)
 
   return (
     <div>
       <h2>파일 업로드</h2>
 
-      <form id='formData' type='multipart/form-data'>
+      <form id='formData' type='multipart/form-data' style={{marginBottom: '30px'}}>
           <p>
           {
-            file.length > 0 ? 
-            file[0].name
+            file ? 
+            file.name
             :
             '업로드할 파일을 추가해주세요.'
           }
           </p>
           <input type='file' id="file" name='file' onChange={handleChange} style={{display:'none'}} ref={fileInput}
             accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-          <button onClick={addFiles}>파일추가</button>
+          <button onClick={addFiles}>{file ? '파일변경' : '파일추가'}</button>
           {
-            file.length > 0 ?
-              <button onClick={deleteFiles}>파일삭제</button>
+            file ?
+              <div>
+                <button onClick={deleteFiles}>파일삭제</button>
+                <button type='button' onClick={submitFile} >전송</button>
+              </div>
             :
               null
           }
-          {/* <button type='button' onClick={submit}>전송</button> */}
       </form>
 
       {
         nowfile ?
-          <PreviewExcel file={file} />
+          <PreviewExcel filedata={file} />
         :
           null
       }
+      
     </div>
   )
 }

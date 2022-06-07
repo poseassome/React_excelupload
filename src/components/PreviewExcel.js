@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import * as xlsx from 'xlsx';
 
-function PreviewExcel(file) {
-
+function PreviewExcel(filedata) {
+  const Files = filedata.filedata;
   const [excelData, setExcelData] = useState();
-console.log(file)
-  const ParsingFile = (file) => {
-    let result = new Array();
 
+  const ParsingFile = () => {
+  /*****  [1] Excel 불러오기   ******/
+    let result = new Array();
     const reader = new FileReader();
 
     reader.onload = () => {
-      let data = file;
-      const wb = xlsx.read(data, {type: "binary"});
+      let fileData = reader.result;
+      const wb = xlsx.read(fileData, {type: "binary"});
       const wsName = wb.SheetNames[0]
       let worksheet = wb.Sheets[wsName];
       let row;
@@ -31,8 +31,25 @@ console.log(file)
       }
       setExcelData({...excelData, 'result': result})
     }
-    reader.readAsBinaryString(new Blob(file));
+    reader.readAsBinaryString(Files);
+
+
+          /*****  [2]-1 Excel 불러오기   ******/
+              // let reader = new FileReader();
+              // reader.onload = function(){
+              //     let fileData = reader.result;
+              //     let wb = xlsx.read(fileData, {type : 'binary'});
+              //     let sheetNameList = wb.SheetNames; // 시트 이름 목록 가져오기 
+              //     let firstSheetName = sheetNameList[0]; // 첫번째 시트명
+              //     let firstSheet = wb.Sheets[firstSheetName]; // 첫번째 시트 
+              //     handleExcelDataHtml(firstSheet);      
+              // };
+              // reader.readAsBinaryString(Files);
   }
+          /*****  [2]-2 Excel 불러오기   ******/
+            // function handleExcelDataHtml(sheet){
+            //   console.log("sssss   ", sheet)
+            // }
 
   useEffect(() => {
     ParsingFile();
@@ -40,17 +57,23 @@ console.log(file)
 
   return (
     <div>
-      {
-        // excelData["result"].map((item, idx) => {
-        //   return (
-        //     <tr>
-        //       {item.map((it, ins) => {
-        //         return <td>{it}</td>
-        //       })}
-        //     </tr>
-        //   )
-        // })
-      }
+      <table style={{width: '800px', margin:'0 auto'}}>
+        <tbody>
+          { excelData ?
+            excelData['result'].map((item, idx) => {
+              return (
+                <tr key={idx}>
+                  {item.map((it, ins) => {
+                    return <td key={ins}>{it}</td>
+                  })}
+                </tr>
+              )
+            })
+            :
+            null
+          }
+        </tbody>
+      </table>
     </div>
   )
 }
