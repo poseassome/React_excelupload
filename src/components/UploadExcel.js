@@ -73,6 +73,7 @@ function UploadExcel() {
               <div>
                 <button onClick={deleteFile}>파일삭제</button>
                 <button type='button' onClick={submitFile} >전송</button>
+                {/* <button type='button' onClick={exportExcelFile} >Excel 저장</button> */}
               </div>
             :
               null

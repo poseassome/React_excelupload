@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import * as xlsx from 'xlsx';
+import RegData from './RegData';
 
 function PreviewExcel(filedata) {
   const Files = filedata.filedata;
   const [file, setFile] = useState();
   const [excelData, setExcelData] = useState();
+  const [noexcelData, setNoexcelData] = useState();
 
   const ParsingFile = () => {
   /*****  [1] Excel 불러오기   ******/
     let result = new Array();
+    let invalidResult = new Array();
     const reader = new FileReader();
 
     reader.onload = () => {
@@ -29,8 +32,15 @@ function PreviewExcel(filedata) {
           else row.push(nextCell.w);
         }
         result.push(row);
+        if(result.indexOf(row)!==0) {
+          if(RegData(row) === false) {
+            result.splice(result.indexOf(row), 1);
+            invalidResult.push(row)
+          }
+        }
       }
       setExcelData({...excelData, 'result': result})
+      setNoexcelData({...noexcelData, 'result': invalidResult})
     }
     reader.readAsBinaryString(Files);
 
@@ -61,12 +71,14 @@ function PreviewExcel(filedata) {
 
   return (
     <div>
+      <h3>유효성 O</h3>
+      {/* *****  유효성 통과 데이터  ***** */}
       <table style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
         <thead>
           <tr>
         { excelData ?
             excelData['result'][0].map((it, ins) => {
-                return <td key={ins} style={{border: '1px solid #000'}}>{it}</td>
+                return <td key={ins} style={{border: '1px solid #000', fontWeight:'bold'}}>{it}</td>
               })
             :
             null
@@ -87,6 +99,37 @@ function PreviewExcel(filedata) {
             // })
 
             excelData['result'].filter((data, idx) => idx !== 0).map((item, idx) => {
+              return (
+                <tr key={idx}>
+                  {item.map((it, ins) => {
+                    return <td key={ins} style={{border: '1px solid #000'}}>{it}</td>
+                  })}
+                </tr>
+              )
+            })
+            :
+            null
+          }
+        </tbody>
+      </table>
+
+      <h3 style={{marginTop: '50px'}}>유효성 X</h3>
+      {/* *****  유효성 미통과 데이터  ***** */}
+      <table style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
+      <thead>
+          <tr>
+        { excelData ?
+            excelData['result'][0].map((it, ins) => {
+                return <td key={ins} style={{border: '1px solid #000', fontWeight:'bold'}}>{it}</td>
+              })
+            :
+            null
+          }
+          </tr>
+        </thead>
+        <tbody>
+          { noexcelData ?
+            noexcelData['result'].map((item, idx) => {
               return (
                 <tr key={idx}>
                   {item.map((it, ins) => {
