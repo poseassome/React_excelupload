@@ -1,3 +1,4 @@
+import { faIgloo } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react'
 import * as xlsx from 'xlsx';
 import RegData from './RegData';
@@ -37,7 +38,7 @@ function PreviewExcel(filedata) {
             result.splice(result.indexOf(row), 1);
             invalidResult.push(row)
           }
-        }
+        } else if(result.indexOf(row)===0) invalidResult.push(row);
       }
       setExcelData({...excelData, 'result': result})
       setNoexcelData({...noexcelData, 'result': invalidResult})
@@ -68,6 +69,36 @@ function PreviewExcel(filedata) {
   useEffect(() => {
     ParsingFile();
   },[file])
+
+  const regDataStyle = (item, idx) => {
+
+    const regExpCorpid = /^[0-9]*$/;
+    const regExpUserid = /^[a-zA-Z0-9]*$/;
+    const regExpUsername = /^[가-힣a-zA-Z]+$/;
+    const regExpPhone = /^[0-9]*$/;
+
+    if(item === undefined || item.replace(/\s/gi, '').length < 1) return false
+    else {
+      if(idx === 0) {
+        // 회사명
+        if(!regExpCorpid.test(item)) return false
+      } 
+      if(idx === 1) {
+        // 아이디
+        if(!regExpUserid.test(item)) return false
+      } 
+      if(idx === 2) {
+        // 이름
+        if(!regExpUsername.test(item)) return false
+      }
+      if(idx === 3) {
+        // 전화번호
+        if(!regExpPhone.test(item)) return false
+      }
+    }
+
+    return true;
+  }
 
   return (
     <div>
@@ -112,14 +143,15 @@ function PreviewExcel(filedata) {
           }
         </tbody>
       </table>
+      {/* <button type='button'>전송</button> */}
 
       <h3 style={{marginTop: '50px'}}>유효성 X</h3>
       {/* *****  유효성 미통과 데이터  ***** */}
       <table style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
       <thead>
           <tr>
-        { excelData ?
-            excelData['result'][0].map((it, ins) => {
+        { noexcelData ?
+            noexcelData['result'][0].map((it, ins) => {
                 return <td key={ins} style={{border: '1px solid #000', fontWeight:'bold'}}>{it}</td>
               })
             :
@@ -129,11 +161,18 @@ function PreviewExcel(filedata) {
         </thead>
         <tbody>
           { noexcelData ?
-            noexcelData['result'].map((item, idx) => {
+            noexcelData['result'].filter((data, idx) => idx !== 0).map((item, idx) => {
               return (
                 <tr key={idx}>
                   {item.map((it, ins) => {
-                    return <td key={ins} style={{border: '1px solid #000'}}>{it}</td>
+                    return (
+                      regDataStyle(it, ins) ? 
+                        <td key={ins} style={{border: '1px solid #000'}}>{it}</td>
+                      :
+                        <td key={ins} style={{border: '1px solid #000', background: '#eee'}}>{it}</td>
+                    )
+
+                    // return <td key={ins} style={{border: '1px solid #000'}}>{it}</td>
                   })}
                 </tr>
               )
@@ -143,6 +182,7 @@ function PreviewExcel(filedata) {
           }
         </tbody>
       </table>
+      <button>엑셀 다운로드</button>
     </div>
   )
 }

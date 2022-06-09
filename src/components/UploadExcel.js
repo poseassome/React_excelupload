@@ -32,13 +32,13 @@ function UploadExcel() {
     e.preventDefault();
     const formData = new FormData();
     formData.append('file', file);
-
+    
     axios({
       method: 'POST',
       url : `http://localhost:8080/xls/upload`,
       data: formData,
       headers: {
-          'Content-Type' : 'multipart/form-data' 
+        'Content-Type' : 'multipart/form-data' 
       }
     })
     .then((response) => { 
@@ -72,7 +72,7 @@ function UploadExcel() {
             file ?
               <div>
                 <button onClick={deleteFile}>파일삭제</button>
-                <button type='button' onClick={submitFile} >전송</button>
+                <button type='button' onClick={submitFile} >엑셀 파일 자체 전송</button>
                 {/* <button type='button' onClick={exportExcelFile} >Excel 저장</button> */}
               </div>
             :
