@@ -1,6 +1,7 @@
 import { faIgloo } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react'
 import * as xlsx from 'xlsx';
+import ExportExcel from './ExportExcel';
 import RegData from './RegData';
 
 function PreviewExcel(filedata) {
@@ -100,6 +101,7 @@ function PreviewExcel(filedata) {
     return true;
   }
 
+
   return (
     <div>
       <h3>유효성 O</h3>
@@ -147,7 +149,7 @@ function PreviewExcel(filedata) {
 
       <h3 style={{marginTop: '50px'}}>유효성 X</h3>
       {/* *****  유효성 미통과 데이터  ***** */}
-      <table style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
+      <table id="tableData" style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
       <thead>
           <tr>
         { noexcelData ?
@@ -182,7 +184,11 @@ function PreviewExcel(filedata) {
           }
         </tbody>
       </table>
-      <button>엑셀 다운로드</button>
+      { noexcelData['result'].length === 1 ?
+          null
+        :
+          <button type='button' onClick={() => ExportExcel(noexcelData)}>엑셀 내려받기</button>
+      }
     </div>
   )
 }

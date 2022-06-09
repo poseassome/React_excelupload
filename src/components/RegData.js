@@ -6,7 +6,7 @@ function RegData(data) {
   const regExpUserid = /^[a-zA-Z0-9]*$/;
   const regExpUsername = /^[가-힣a-zA-Z]+$/;
   const regExpPhone = /^[0-9]*$/;
-  
+
   data.forEach((item, idx) => {
     if(item === undefined || item.replace(/\s/gi, '').length < 1) arr.push(idx);
     else {
@@ -27,7 +27,6 @@ function RegData(data) {
         if(!regExpPhone.test(item)) arr.push(idx);
       }
     }
-    
   })
 
   if(arr.length > 0) return false;
