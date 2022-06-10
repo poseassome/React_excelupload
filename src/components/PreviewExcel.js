@@ -1,8 +1,13 @@
 import { faIgloo } from '@fortawesome/free-solid-svg-icons';
 import React, { useEffect, useState } from 'react'
 import * as xlsx from 'xlsx';
-import ExportExcel from './ExportExcel';
 import RegData from './RegData';
+
+import ExportExcel from './ExportExcel';
+import ExportExcel_style from './ExportExcel_style';
+
+import TabletoJson from './TabletoJson';
+
 
 function PreviewExcel(filedata) {
   const Files = filedata.filedata;
@@ -152,12 +157,12 @@ function PreviewExcel(filedata) {
       <table id="tableData" style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
       <thead>
           <tr>
-        { noexcelData ?
-            noexcelData['result'][0].map((it, ins) => {
-                return <td key={ins} style={{border: '1px solid #000', fontWeight:'bold'}}>{it}</td>
-              })
+          { noexcelData ?
+              noexcelData['result'][0].map((it, ins) => {
+                  return <td key={ins} style={{border: '1px solid #000', fontWeight:'bold'}}>{it}</td>
+                })
             :
-            null
+              null
           }
           </tr>
         </thead>
@@ -184,10 +189,13 @@ function PreviewExcel(filedata) {
           }
         </tbody>
       </table>
-      { noexcelData['result'].length === 1 ?
+      { noexcelData && noexcelData['result'].length === 1 ?
           null
         :
-          <button type='button' onClick={() => ExportExcel(noexcelData)}>엑셀 내려받기</button>
+          <div>
+            <button type='button' onClick={() => ExportExcel(noexcelData)}>엑셀 내려받기</button>
+            <button type='button' onClick={() => ExportExcel_style(noexcelData)}>엑셀 내려받기(style)</button>
+          </div>
       }
     </div>
   )
