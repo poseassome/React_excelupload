@@ -6,8 +6,6 @@ import RegData from './RegData';
 import ExportExcel from './ExportExcel';
 import ExportExcel_style from './ExportExcel_style';
 
-import TabletoJson from './TabletoJson';
-
 
 function PreviewExcel(filedata) {
   const Files = filedata.filedata;
