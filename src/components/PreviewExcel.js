@@ -5,6 +5,7 @@ import RegData from './RegData';
 
 import ExportExcel from './ExportExcel';
 import ExportExcel_style from './ExportExcel_style';
+import axios from 'axios';
 
 
 function PreviewExcel(filedata) {
@@ -37,12 +38,12 @@ function PreviewExcel(filedata) {
           else row.push(nextCell.w);
         }
         result.push(row);
-        if(result.indexOf(row)!==0) {
-          if(RegData(row) === false) {
-            result.splice(result.indexOf(row), 1);
-            invalidResult.push(row)
-          }
-        } else if(result.indexOf(row)===0) invalidResult.push(row);
+        // if(result.indexOf(row)!==0) {
+        //   if(RegData(row) === false) {
+        //     result.splice(result.indexOf(row), 1);
+        //     invalidResult.push(row)
+        //   }
+        // } else if(result.indexOf(row)===0) invalidResult.push(row);
       }
       setExcelData({...excelData, 'result': result})
       setNoexcelData({...noexcelData, 'result': invalidResult})
@@ -73,6 +74,43 @@ function PreviewExcel(filedata) {
   useEffect(() => {
     ParsingFile();
   },[file])
+
+  const sendData = () => {
+    let DataforSend = [];
+    let onlyData = excelData['result'].filter((ele, idx) => idx !== 0);
+    const sendUrl = 'http://1.212.9.203:39080/iq200/customers';
+    const axiosConfig = {
+      headers:{
+        "Content-Type": "application/json"
+      }
+    }
+
+    for(let i=0; i<onlyData.length; i++){
+      DataforSend.push({
+        companyid: "2",
+        custname: onlyData[i][0],
+        custcell: onlyData[i][1],
+        custphone: onlyData[i][2],
+        custfax: onlyData[i][3],
+        custdept: onlyData[i][4],
+        title: onlyData[i][5],
+        custemail: onlyData[i][6],
+        custzipcode: onlyData[i][7],
+        custaddr1: onlyData[i][8],
+        custaddr2: onlyData[i][9],
+        custcompany: onlyData[i][10],
+        custmemo: onlyData[i][11]
+      })
+    }
+
+    axios.post(sendUrl, JSON.stringify(DataforSend), axiosConfig)
+      .then(res => {
+        console.log(res)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
 
   const regDataStyle = (item, idx) => {
 
@@ -108,16 +146,18 @@ function PreviewExcel(filedata) {
   return (
     <div>
       <h3>유효성 O</h3>
+      <button type='button' onClick={sendData}>데이터 전송</button>
       {/* *****  유효성 통과 데이터  ***** */}
       <table style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
         <thead>
           <tr>
-        { excelData ?
-            excelData['result'][0].map((it, ins) => {
+          {
+            excelData ?
+              excelData['result'][0].map((it, ins) => {
                 return <td key={ins} style={{border: '1px solid #000', fontWeight:'bold'}}>{it}</td>
               })
             :
-            null
+              null
           }
           </tr>
         </thead>
@@ -150,9 +190,10 @@ function PreviewExcel(filedata) {
       </table>
       {/* <button type='button'>전송</button> */}
 
+
       <h3 style={{marginTop: '50px'}}>유효성 X</h3>
       {/* *****  유효성 미통과 데이터  ***** */}
-      <table id="tableData" style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
+      {/* <table id="tableData" style={{width: '800px', margin:'0 auto', borderCollapse:'collapse'}}>
       <thead>
           <tr>
           { noexcelData ?
@@ -186,7 +227,7 @@ function PreviewExcel(filedata) {
             null
           }
         </tbody>
-      </table>
+      </table> */}
       { noexcelData && noexcelData['result'].length === 1 ?
           null
         :
